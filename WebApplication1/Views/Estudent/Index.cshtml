@@ -1,0 +1,142 @@
+﻿@using WebApplication1.Models
+@model IEnumerable<EstudentModel>
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Alumnnos</title>
+
+</head>
+
+
+
+
+
+<body>
+
+   
+
+    
+    @using (Html.BeginForm("Index", "Estudent", FormMethod.Post))
+    {
+        
+        <input type="submit" value="Cargar Excel D:/Calificaciones.xlsx" />
+    }
+    @if (Model.Count() > 0)
+    {
+        <hr />
+        <table class="table" cellpadding="0" cellspacing="0" border="1">
+            <tr>
+                <th>Nombre</th>
+                <th>Apellido Paterno</th>
+                <th>Apellido Materno</th>
+                <th>Fecha de nacimiento</th>
+                <th>Grupo</th>
+                <th>Calificación</th>
+                <th>User</th>
+
+            </tr>
+            @foreach (EstudentModel user in Model)
+            {
+        <tr>
+            <td>@user.Nombres</td>
+            <td>@user.ApellidoPaterno</td>
+            <td>@user.ApellidoMaterno</td>
+            <td>@user.FechaNacimiento</td>
+            <td>@user.Grupo  @user.Grado</td>
+            <td>@user.Calificacion</td>
+            <td>@user.ClaveUsuario</td>
+        </tr>
+            }
+
+        </table>
+        <h3>El alumno con mejor calificación es: @ViewData["mejorCalificacion"] </h3>
+        <h3>El alumno con peor calificación es: @ViewData["peorCalificación"] </h3>
+        <h3>La calificacion promedio es: @ViewData["promedio"] </h3>
+
+        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+        <div id="chart_div"></div>
+
+        <label>Cantidad de veces a rotar (1,2,3,4,5)</label>
+        <input type="text" name="cantRotar" id="cantRotar" />
+        <button onclick="rotar()">Ver Salida</button>
+        <p id="resRotar"></p>
+
+
+
+
+
+    }
+
+
+
+
+
+</body>
+
+</html>
+
+<script>
+
+    google.charts.load('current', {packages: ['corechart', 'bar']});
+    google.charts.setOnLoadCallback(drawBasic);
+   
+    function rotar() {
+        let inputValue = document.getElementById("cantRotar").value;
+        document.getElementById("resRotar").innerHTML = inputValue;
+
+        if (isNaN(inputValue)) { alert("No valido") }
+        var val = inputValue;
+        var res;
+
+        let arr = [1, 2, 3, 4, 5];
+
+        for (i = 0; i < inputValue; i++) {
+        let last = arr.pop();
+            arr.unshift(last);
+
+        }
+        document.getElementById("resRotar").innerHTML = arr;
+      
+    }
+
+
+function drawBasic() {
+    var dataModel = JSON.parse('@Html.Raw(Json.Serialize(Model))');
+   
+
+
+      var data = google.visualization.arrayToDataTable([
+        ['Estudiante', 'Calificacion',],
+        [dataModel[0].nombres, JSON.parse(dataModel[0].calificacion)],
+        [dataModel[1].nombres, JSON.parse(dataModel[1].calificacion)],
+        [dataModel[2].nombres, JSON.parse(dataModel[2].calificacion)],
+        [dataModel[3].nombres, JSON.parse(dataModel[3].calificacion)],
+        [dataModel[4].nombres, JSON.parse(dataModel[4].calificacion)],
+        [dataModel[5].nombres, JSON.parse(dataModel[5].calificacion)],
+        [dataModel[6].nombres, JSON.parse(dataModel[6].calificacion)],
+        [dataModel[7].nombres, JSON.parse(dataModel[7].calificacion)],
+        [dataModel[8].nombres, JSON.parse(dataModel[8].calificacion)],
+        [dataModel[9].nombres, JSON.parse(dataModel[9].calificacion)],
+      ]);
+
+      var options = {
+        title: 'Reporte de calificaciones',
+        chartArea: {width: '50%'},
+        hAxis: {
+          title: 'Calificaciones',
+          minValue: 0
+        },
+        vAxis: {
+          title: 'Alumno'
+        }
+      };
+
+      var chart = new google.visualization.BarChart(document.getElementById('chart_div'));
+
+      chart.draw(data, options);
+    }
+
+</script>

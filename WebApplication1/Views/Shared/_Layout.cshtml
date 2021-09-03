@@ -1,0 +1,78 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Examen Conduent</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+    <environment include="Development">
+        <link rel="stylesheet" href="~/lib/css/bootstrap.css" />
+    </environment>
+    <environment exclude="Development">
+        <link rel="stylesheet" href="~/lib/css/bootstrap.min.css" />
+    </environment>
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+            <div class="container">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Examen Conduent</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                
+                    <p id="weather"></p>
+
+                
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2021 - Sergio Herrera - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @RenderSection("Scripts", required: false)
+</body>
+
+</html>
+
+<script>
+
+    weather();
+
+    function weather() {
+        var response;
+
+        var xhttp = new XMLHttpRequest();
+
+        // Esta es la función que se ejecutará al finalizar la llamada
+        xhttp.onreadystatechange = function () {
+            // Si nada da error
+            if (this.readyState == 4 && this.status == 200) {
+                // La respuesta, aunque sea JSON, viene en formato texto, por lo que tendremos que hace run parse
+                response = (JSON.parse(this.responseText));
+                document.getElementById("weather").innerHTML = "La temperatura actual en " + response.data[0].city_name + " es de " + response.data[0].temp + "°C";
+            }
+        };
+
+        // Endpoint de la API y método que se va a usar para llamar
+        xhttp.open("GET", "https://api.weatherbit.io/v2.0/current?lat=29.0730&lon=-110.961&key=505d727d92204f8e856f006c734f6747", true);
+        xhttp.setRequestHeader("Content-type", "application/json");
+        // Si quisieramos mandar parámetros a nuestra API, podríamos hacerlo desde el método send()
+        xhttp.send(null);
+
+    }
+</script>
